@@ -9,7 +9,8 @@ def user_login(req):
         form = LoginForm(req.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user =  authenticate(req,username=data['username'],password=data['password'])
+            user =  authenticate(
+                req,username=data['username'],password=data['password'])
             if user is not None:
                 login(req,user)
                 return HttpResponse("user authenticated and logged in")
