@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate,login
 from .forms import LoginForm
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def user_login(req):
@@ -20,3 +21,7 @@ def user_login(req):
     else:
         form = LoginForm()
     return render(req, 'users/login.html',{'form':form})
+
+@login_required
+def index(req):
+    return render(req,'users/index.html')
