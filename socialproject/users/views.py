@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate,login
 from .forms import LoginForm,UserRegistrationForm,UserEditForm,ProfileEditForm
 from django.contrib.auth.decorators import login_required
 from .models import Profile
+from posts.models import Post
 
 
 # Create your views here.
@@ -27,7 +28,9 @@ def user_login(req):
 
 @login_required
 def index(req):
-    return render(req,'users/index.html')
+    current_user = req.user
+    posts = Post.objects.filter(user=current_user)
+    return render(req,'users/index.html',{'posts':posts})
 
 def register(req):
     if req.method == 'POST':
