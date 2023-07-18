@@ -30,7 +30,8 @@ def user_login(req):
 def index(req):
     current_user = req.user
     posts = Post.objects.filter(user=current_user)
-    return render(req,'users/index.html',{'posts':posts})
+    profile = Profile.objects.filter(user=current_user).first()
+    return render(req,'users/index.html',{'posts':posts, 'profile':profile})
 
 def register(req):
     if req.method == 'POST':
