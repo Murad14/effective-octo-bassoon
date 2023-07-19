@@ -1,4 +1,5 @@
 {% extends 'users/base.html' %}
+{% load mathfilters %}
 {% load static %}
 {% block body %}
 <div class="flex mt-5 pt-10 justify-center">
@@ -22,10 +23,23 @@
     </div>
     <div class="px-6 py-4">
       <div class="icon-container flex gap-5">
-        <img class="w-8 h-8" src="{% static 'users/images/like.png' %}" alt="like">
+        <a id="{{ post.id }}" class="btn-like">
+          {% if logged_user in post.liked_by.all %}
+          <img class="w-8 h-8" src="{% static 'users/images/red_like.png' %}" alt="like">
+          {% else %}
+          <img class="w-8 h-8" src="{% static 'users/images/white_like.png' %}" alt="like">
+          {% endif %}
+        </a>
+
         <img class="w-8 h-8" src="{% static 'users/images/comment.png' %}" alt="comment">
         <img class="w-8 h-8" src="{% static 'users/images/share.png' %}" alt="share">
       </div>
+    </div>
+    <div>
+      {% if post.liked_by.count < 1 %} {% elif post.liked_by.count==1 %} {{post.liked_by.first}} Likes this {% elif
+        post.liked_by.count> 1 %}
+        {{post.liked_by.first}} & {{post.liked_by.count |sub:1}} Other likes this
+        {% endif %}
     </div>
     <div class="px-6 py-4">
       <div class="font-bold text-xl mb-2">
@@ -38,5 +52,20 @@
   <!--Card ends here-->
   {% endfor %}
 </div>
+
+<script type="text/javascript">
+  console.log('working');
+  window.CSRF_TOKEN = "{{ csrf_token }}";
+  $(document).on('click', '.btn-like', function () {
+    var post_id = this.id;
+    $.ajax({
+      method: "POST",
+      url: '/posts/like',
+      data: { post_id: post_id, csrfmiddlewaretoken: window.CSRF_TOKEN }
+
+    });
+    window.location.href = "http://127.0.0.1:8000/posts/feed"
+  });
+</script>
 
 {% endblock %}

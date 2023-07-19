@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import PostCreateForm
 from django.contrib.auth.decorators import login_required
 from .models import Post
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 
@@ -20,4 +22,14 @@ def post_create(req):
 
 def feed(req):
     posts = Post.objects.all()
-    return render(req, 'posts/feed.html', {'posts': posts})
+    logged_user = req.user
+    return render(req, 'posts/feed.html', {'posts': posts, 'logged_user':logged_user})
+
+def like_post(req):
+    post_id = req.POST.get('post_id')
+    post = get_object_or_404(Post,id=post_id)
+    if post.liked_by.filter(id=req.user.id).exists():
+        post.liked_by.remove(req.user)
+    else:
+        post.liked_by.add(req.user)
+    return redirect('feed')
