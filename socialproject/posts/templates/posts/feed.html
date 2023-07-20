@@ -36,9 +36,13 @@
       </div>
     </div>
     <div>
-      {% if post.liked_by.count < 1 %} {% elif post.liked_by.count==1 %} {{post.liked_by.first}} Likes this {% elif
-        post.liked_by.count> 1 %}
-        {{post.liked_by.first}} & {{post.liked_by.count |sub:1}} Other likes this
+      {% if post.liked_by.count < 1 %} <!-- No likes -->
+        {% elif post.liked_by.count == 1 %}
+        <!-- One like -->
+        {{ post.liked_by.first }} Likes this
+        {% elif post.liked_by.count > 1 %}
+        <!-- More than one like -->
+        {{ post.liked_by.first }} & {{ post.liked_by.count|add:"-1" }} Other(s) like this
         {% endif %}
     </div>
     <div class="px-6 py-4">
@@ -46,6 +50,30 @@
         {{post.title}}
       </div>
       <p class="text-gray-700 text-base">{{post.caption}}</p>
+    </div>
+
+    <div class="px-5 py-5">
+      {% for comment in post.comments.all %}
+        {{comment.body}}
+        <br>
+      {% endfor %}
+    </div>
+    <div class="px-5 py-5">
+      <form method="post" class="bg-white shadow-md m-10 w-4/5 rounded px-8 pt-6 pb-8 mb-4">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="">Comment</label>
+        </div>
+        <div class="shadow appearance-none border rounded py-2 px-3 mr-10 text-grey-700">
+          {{ comment_form.body }}
+        </div>
+        <div>
+          <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
+        </div>
+
+          <button class="bg-green-500 text-white px-5 py-2" type="submit">Add</button>
+    
+      </form>
     </div>
 
   </a>
