@@ -9,7 +9,7 @@ class PostCreateForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('body',)
+        fields = ('body', 'posted_by')
         widgets = {
             'body': forms.TextInput(attrs={'placeholder': 'Write a comment...'}),
         }
