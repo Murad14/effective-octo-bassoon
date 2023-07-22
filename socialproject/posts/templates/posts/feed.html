@@ -31,7 +31,11 @@
           {% endif %}
         </a>
 
-        <img class="w-8 h-8" src="{% static 'users/images/comment.png' %}" alt="comment">
+        <a class="btn-comment" data-post-id="{{ post.id }}" href="">
+          <img class="w-8 h-8" src="{% static 'users/images/comment.png' %}" alt="comment">
+        </a>
+
+
         <img class="w-8 h-8" src="{% static 'users/images/share.png' %}" alt="share">
       </div>
     </div>
@@ -52,30 +56,22 @@
       <p class="text-gray-700 text-base">{{post.caption}}</p>
     </div>
 
-    <div class="px-5 py-5">
+    <div class="px-5 py-5 comment-section" data-post-id="{{ post.id }}">
       {% for comment in post.comments.all %}
       <b>{{ comment.posted_by }}</b> :{{comment.body}}
       <br>
       {% endfor %}
     </div>
-    <div class="px-5 py-5">
-      <form method="post" class="bg-white rounded">
+
+
+    <div class="comment-form-container hidden" data-post-id="{{ post.id }}">
+      <form method="post" class="bg-white rounded" action="{% url 'add_comment' %}">
         {% csrf_token %}
         <div class="flex">
-
-          <div class="border rounded mr-10 text-grey-700">
-            {{ comment_form.body }}
-          </div>
-
-          <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-          <input type="hidden" name="posted_by" id="posted_by" value="{{ logged_user }}">
-
-
-          <button class="bg-green-500 text-white px-5 py-2" type="submit">Add</button>
-
-
+          <textarea name="body" class="border rounded mr-10 text-grey-700"></textarea>
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <button class="bg-green-500 text-white px-5 py-2 btn-comment-submit" type="submit">Add</button>
         </div>
-
       </form>
     </div>
 
@@ -97,6 +93,40 @@
     });
     window.location.href = "http://127.0.0.1:8000/posts/feed"
   });
+  $(document).on('click', '.btn-comment', function (event) {
+
+    // Prevent the form submission when the comment button is clicked
+    event.preventDefault();
+
+    // Get the post ID associated with the clicked comment icon
+    var post_id = $(this).data('post-id');
+
+    // Toggle the visibility of the comment input field when the comment button is clicked
+    $(`.comment-form-container[data-post-id="${post_id}"]`).toggleClass('hidden');
+  });
+
+  // New event handler for the "Add" button inside the comment form
+  $(document).on('click', '.btn-comment-submit', function () {
+    var post_id = $(this).data('post-id');
+    var body = $(`.comment-form-container[data-post-id="${post_id}"] textarea[name="body"]`).val();
+
+    // Send the comment data to the server via AJAX
+    $.ajax({
+      method: "POST",
+      url: '/posts/add_comment',  // Replace with the URL for adding a comment
+      data: {
+        post_id: post_id,
+        posted_by: "{{ logged_user }}",  // Replace with the correct value
+        body: body,
+        csrfmiddlewaretoken: window.CSRF_TOKEN
+      }
+
+    });
+
+    // Clear the comment input field after submitting the comment
+    $(`.comment-form-container[data-post-id="${post_id}"] textarea[name="body"]`).val('');
+  });
+
 </script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from .forms import PostCreateForm, CommentForm
 from django.contrib.auth.decorators import login_required
-from .models import Post
+from .models import Post, Comment
 from django.shortcuts import get_object_or_404
 
 
@@ -42,4 +42,14 @@ def like_post(req):
         post.liked_by.remove(req.user)
     else:
         post.liked_by.add(req.user)
+    return redirect('feed')
+
+@login_required
+def add_comment(req):
+    if req.method == 'POST':
+        post_id = req.POST.get('post_id')
+        post = get_object_or_404(Post, id=post_id)
+        body = req.POST.get('body')
+        new_comment = Comment(post=post, posted_by=req.user, body=body)
+        new_comment.save()
     return redirect('feed')
