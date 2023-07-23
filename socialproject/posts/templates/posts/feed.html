@@ -68,7 +68,7 @@
       <form method="post" class="bg-white rounded" action="{% url 'add_comment' %}">
         {% csrf_token %}
         <div class="flex">
-          <textarea name="body" class="border rounded mr-10 text-grey-700"></textarea>
+          <input name="body" class="border rounded mr-10 text-grey-700">
           <input type="hidden" name="post_id" value="{{ post.id }}">
           <button class="bg-green-500 text-white px-5 py-2 btn-comment-submit" type="submit">Add</button>
         </div>
