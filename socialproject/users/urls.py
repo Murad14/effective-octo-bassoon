@@ -27,4 +27,5 @@ urlpatterns = [
          name='password_reset_complete'),
     path('register/',views.register, name='register'), # type: ignore
     path('edit/',views.edit,name='edit'), # type: ignore
+    path('profile/', views.profile_view, name='profile'), 
 ]

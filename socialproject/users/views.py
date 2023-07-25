@@ -61,3 +61,11 @@ def edit(req):
         profile_form = ProfileEditForm(
             instance=req.user.profile)
         return render(req, 'users/edit.html',{'user_form':user_form,'profile_form':profile_form})
+
+@login_required
+def profile_view(req):
+    user = req.user
+    context = {
+        'user': user,
+    }
+    return render(req, 'users/profile.html', context)

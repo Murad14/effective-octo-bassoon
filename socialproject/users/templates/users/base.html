@@ -21,7 +21,7 @@
                 <!--website items-->
                 <div class="space-x-1">
                     <a class="py-4 px-2 text-gray-500 font-semibold" href="{% url 'create' %}">Add Post</a>
-                    <a class="py-4 px-2 text-gray-500 font-semibold" href="">Profile</a>
+                    <a class="py-4 px-2 text-gray-500 font-semibold" href="/users/profile/">Profile</a>
                     {% if request.user.is_authenticated %}
                     <a class="py-4 px-2 text-gray-500 font-semibold" href="{% url 'logout' %}">Logout</a>
                     {% else %}
