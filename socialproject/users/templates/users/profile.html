@@ -1,7 +1,7 @@
 {% extends 'users/base.html' %}
 {% block body %}
 <div class="flex flex-col items-center mt-10">
-    <div class="rounded-full h-40 w-40 overflow-hidden bg-gray-300">
+    <div class="rounded-full h-40 w-40 overflow-hidden bg-gray-300 cursor-pointer" onclick="showModal()">
         <img class="h-full w-full object-cover" src="{{ user.profile.photo.url }}" alt="Profile Photo">
     </div>
     <div>
@@ -13,5 +13,33 @@
 
 </div>
 
+<!-- Modal -->
+<div id="modal" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="max-w-3xl w-full">
+        <img id="modalImage" class="w-full" src="" alt="Profile Photo">
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    function showModal() {
+        console.log('working')
+        const modal = document.getElementById('modal');
+        const modalImage = document.getElementById('modalImage');
+        const thumbnailImage = document.querySelector('.cursor-pointer img');
+
+        // Show the modal and set the image source to the original photo URL
+        modal.style.display = 'flex';
+        modalImage.src = thumbnailImage.src;
+
+        // Hide the modal when clicking outside the image
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+</script>
 {% endblock %}
 
