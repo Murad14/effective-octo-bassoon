@@ -7,6 +7,5 @@ urlpatterns = [
     path('feed',views.feed,name='feed'),
     path('like', views.like_post, name='like'), 
     path('add_comment/', views.add_comment, name='add_comment'), # type: ignore
-    
    
 ]

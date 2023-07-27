@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate,login
 from .forms import LoginForm,UserRegistrationForm,UserEditForm,ProfileEditForm
 from django.contrib.auth.decorators import login_required
@@ -18,7 +18,7 @@ def user_login(req):
                 req,username=data['username'],password=data['password'])
             if user is not None:
                 login(req,user)
-                return HttpResponse("user authenticated and logged in")
+                return redirect('feed')
             else:
                 return HttpResponse('Invalid credentials')
             
