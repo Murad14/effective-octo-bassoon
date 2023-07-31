@@ -3,4 +3,7 @@ env/
 __pycache__/
 node_modules/
 styles.css/
+.babelrc/
+package.json/
+package-lock.json/
 
