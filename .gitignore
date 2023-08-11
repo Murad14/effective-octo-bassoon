@@ -1,6 +1,5 @@
 env/
 .vscode/
-staticfiles/
 __pycache__/
 node_modules/
 styles.css/
