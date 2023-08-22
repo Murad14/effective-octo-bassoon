@@ -32,8 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
-    'posts',
     'mathfilters',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +39,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'users.apps.UsersConfig',  # Custom configuration for the 'users' app
+    'posts.apps.PostsConfig',  # Custom configuration for the 'posts' app
+    
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
+
+
+REST_FRAMEWORK = {
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
+    )
+    
+}
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

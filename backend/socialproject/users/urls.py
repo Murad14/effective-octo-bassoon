@@ -1,3 +1,4 @@
+'''
 from django.urls import path
 from .import views
 from django.contrib.auth import views as auth_view
@@ -29,3 +30,4 @@ urlpatterns = [
     path('edit/',views.edit,name='edit'), # type: ignore
     path('profile/', views.profile_view, name='profile'), 
 ]
+'''
