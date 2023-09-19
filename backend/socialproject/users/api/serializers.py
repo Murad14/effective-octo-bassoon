@@ -48,3 +48,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password1'],  
         )
         return user
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)

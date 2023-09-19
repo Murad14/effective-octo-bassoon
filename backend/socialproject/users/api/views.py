@@ -4,10 +4,11 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer
+from .serializers import UserRegisterSerializer, PasswordChangeSerializer
 from rest_framework import status, serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import update_session_auth_hash
 
 
 class RegisterAPIView(APIView):
@@ -32,40 +33,27 @@ class LogoutAPIView(APIView):
             return Response({"error": "Invalid token or token not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         
-
+class PasswordChangeAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            old_password = serializer.validated_data.get("old_password")
+            new_password = serializer.validated_data.get("new_password")
+            confirm_password = serializer.validated_data.get("confirm_password")
+            
+            user = self.request.user
+            if not user.check_password(old_password):
+                return Response({"detail": "Old password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if new_password != confirm_password:
+                return Response({"detail": "New passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)
+            return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-    
-    
-    
-    
-    
-'''
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        token['username'] = user.username
-        # ...
-
-        return token
-    
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
-    
-    
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        '/api/token',
-        '/api/token/refresh',
-    ]
-    
-    return Response(routes) 
-'''
