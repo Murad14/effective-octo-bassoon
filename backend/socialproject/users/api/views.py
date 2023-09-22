@@ -4,18 +4,19 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer, PasswordChangeSerializer, PasswordResetRequestSerializer
-from rest_framework import status, serializers
+from .serializers import UserRegisterSerializer, PasswordChangeSerializer, EmailSerializer
+from rest_framework import status, serializers, generics, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import update_session_auth_hash
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_decode
+from django.urls import reverse
 
 
 class RegisterAPIView(APIView):
@@ -64,6 +65,7 @@ class PasswordChangeAPIView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+'''
 class PasswordResetRequestAPIView(APIView):
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -111,3 +113,46 @@ class PasswordResetConfirmAPIView(APIView):
             return Response({"detail": "Password reset successfully."}, status=status.HTTP_200_OK)
         else:
             return Response({"detail": "Invalid reset link or token."}, status=status.HTTP_400_BAD_REQUEST)
+
+'''
+
+class PasswordResetAPIView(generics.GenericAPIView):
+    
+    serializer_class = EmailSerializer
+    
+    def post(self, request):
+        
+        serializer = self.serializer_class(data= request.data)
+        serializer.is_valid(raise_exception = True)
+        email = serializer.data["email"]
+        user = User.objects.filter(email=email).first()
+        if user:
+            encoded_pk = urlsafe_base64_encode(force_bytes(user.pk))
+            token = PasswordResetTokenGenerator().make_token(user)
+            
+            reset_url = reverse(
+                "password_reset_request",
+                kwargs= {"encoded_pk": encoded_pk, "token": token},
+            )
+            
+            reset_url = f"http://127.0.0.1:8000/api{reset_url}"
+            
+            # Send the password reset email
+            subject = "Password Reset Request"
+            message = f"Please click the following link to reset your password: {reset_url}"
+            from_email = "muradulalam4@gmail.com" #sender email
+            recipient_list = [email]
+            
+            send_mail(subject, message, from_email, recipient_list)
+            
+            return Response(
+                {
+                    "detail": "Password reset email sent successfully.",
+                    "message": f"reset link: {reset_url}"
+                }, status=status.HTTP_200_OK)
+        
+        return Response({
+            "detail": serializer.errors,
+            "message": "User doesn't exists"
+        },status=status.HTTP_400_BAD_REQUEST)
+            
