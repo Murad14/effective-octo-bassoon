@@ -209,9 +209,8 @@ CORS_ALLOW_ALL_ORIGINS: True
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
-from decouple import Config
+from decouple import config
 
-config = Config('.env')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
