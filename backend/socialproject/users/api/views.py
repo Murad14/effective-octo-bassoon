@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
+from .models import Profile
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
-from .serializers import UserRegisterSerializer, PasswordChangeSerializer, EmailSerializer, ResetPasswordSerializer
+from .serializers import UserRegisterSerializer, PasswordChangeSerializer, EmailSerializer, ResetPasswordSerializer, ProfileSerializer, UserProfileUpdateSerializer
 from rest_framework import status, serializers, generics, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
@@ -126,3 +128,35 @@ class ResetPasswordAPIView(generics.GenericAPIView):
         return Response(
             {"message": "Password Reset Complete"},status=status.HTTP_200_OK
         )
+        
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(
+            {
+                "message": "Profile details retrieved successfully",
+                "data": serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+class ProfileEditView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserProfileUpdateSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Profile updated successfully", "data": serializer.data},
+                status=status.HTTP_200_OK
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from .models import Profile
 from rest_framework import serializers
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
@@ -89,3 +90,21 @@ class ResetPasswordSerializer(serializers.Serializer):
         new_password = self.validated_data['new_password']
         user.set_password(new_password)
         user.save()
+        
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('photo',)
+        
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'last_name', 'email', 'photo')
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.photo = validated_data.get('photo', instance.photo)
+        instance.save()
+        return instance
