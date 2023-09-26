@@ -1,33 +1,26 @@
 '''
 from django.urls import path
-from .import views
-from django.contrib.auth import views as auth_view
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    
+)
+
+from .views import RegisterAPIView, LogoutAPIView ,PasswordChangeAPIView, PasswordResetAPIView, ResetPasswordAPIView, ProfileView, ProfileEditView
+
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('login/', views.user_login, name='login'),
-    path('logout/', auth_view.LogoutView.as_view(
-       template_name ='users/logout.html'), name='logout'), 
-    path('password_change/',auth_view.PasswordChangeView.as_view
-        (template_name ='users/password_change_form.html'),
-        name='password_change'),
-    path('password_change/done/',auth_view.PasswordChangeDoneView.as_view
-        (template_name ='users/password_change_done.html'),
-        name='password_change_done'),
-    path('password_reset/',auth_view.PasswordResetView.as_view
-        (template_name ='users/password_reset_form.html'),
-        name='password_reset'),
-    path('password_reset/done/',auth_view.PasswordResetDoneView.as_view
-        (template_name ='users/password_reset_done.html'),
-        name='password_reset_done'),
-    path('reset/<uidb64>/<token>',auth_view.PasswordResetConfirmView.as_view
-         (template_name ='users/password_reset_confirm.html'),
-         name='password_reset_confirm'),
-    path('reset/done/',auth_view.PasswordResetCompleteView.as_view
-         (template_name ='users/password_reset_complete.html'),
-         name='password_reset_complete'),
-    path('register/',views.register, name='register'), # type: ignore
-    path('edit/',views.edit,name='edit'), # type: ignore
-    path('profile/', views.profile_view, name='profile'), 
+    path('login/', TokenObtainPairView.as_view(), name='login_view'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh_view'),
+    
+    path('register/', RegisterAPIView.as_view(), name='register_view'),
+    path('logout/', LogoutAPIView.as_view(), name='logout_view'),
+    path('password-change/', PasswordChangeAPIView.as_view(), name='password_change'),
+    path('password-reset/', PasswordResetAPIView.as_view(), name='password_reset_request'),
+    path('password-reset/<str:encoded_pk>/<str:token>/', ResetPasswordAPIView.as_view(),
+         name='password_reset_request'),
+    path('profile/', ProfileView.as_view(), name='user_profile_view'),
+    path('profile/edit/', ProfileEditView.as_view(), name='user_profile_edit_view'),
 ]
 '''

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+   
     'mathfilters',
     'users.apps.UsersConfig',  # Custom configuration for the 'users' app
     'posts.apps.PostsConfig',  # Custom configuration for the 'posts' app
