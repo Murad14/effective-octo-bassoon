@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
     
 )
 
-from .views import RegisterAPIView, LogoutAPIView ,PasswordChangeAPIView, PasswordResetAPIView, ResetPasswordAPIView, ProfileView, ProfileEditView
+from .views import RegisterAPIView, LogoutAPIView ,PasswordChangeAPIView, PasswordResetAPIView, ResetPasswordAPIView, ProfileAPIView, ProfileEditAPIView
 
 
 urlpatterns = [
@@ -19,8 +19,8 @@ urlpatterns = [
     path('password-reset/', PasswordResetAPIView.as_view(), name='password_reset_request'),
     path('password-reset/<str:encoded_pk>/<str:token>/', ResetPasswordAPIView.as_view(),
          name='password_reset_request'),
-    path('profile/', ProfileView.as_view(), name='user_profile_view'),
-    path('profile/edit/', ProfileEditView.as_view(), name='user_profile_edit_view'),
+    path('profile/', ProfileAPIView.as_view(), name='user_profile_view'),
+    path('profile/edit/', ProfileEditAPIView.as_view(), name='user_profile_edit_view'),
 ]
 
 

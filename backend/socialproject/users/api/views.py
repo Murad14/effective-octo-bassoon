@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from .models import Profile
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from .serializers import UserRegisterSerializer, PasswordChangeSerializer, EmailSerializer, ResetPasswordSerializer, ProfileSerializer, UserProfileUpdateSerializer
-from rest_framework import status, serializers, generics, viewsets
+from rest_framework import status,generics
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import update_session_auth_hash
@@ -23,6 +22,7 @@ class RegisterAPIView(APIView):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            Profile.objects.create(user=user)
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -129,34 +129,45 @@ class ResetPasswordAPIView(generics.GenericAPIView):
             {"message": "Password Reset Complete"},status=status.HTTP_200_OK
         )
         
-class ProfileView(APIView):
+class ProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
+        user_data = {
+            'username': request.user.username,
+            'email': request.user.email,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+        }
         return Response(
             {
                 "message": "Profile details retrieved successfully",
-                "data": serializer.data
+                'user_data': user_data,
+                "data": serializer.data,
             },
             status=status.HTTP_200_OK
         )
 
-class ProfileEditView(APIView):
+class ProfileEditAPIView(APIView):
+    
     permission_classes = [IsAuthenticated]
-
-    def put(self, request):
+    
+    def put(self, request, format=None):
         try:
-            profile = request.user.profile
-        except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+            profile = Profile.objects.get(user=request.user)
 
-        serializer = UserProfileUpdateSerializer(profile, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {"message": "Profile updated successfully", "data": serializer.data},
-                status=status.HTTP_200_OK
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                response_data = {
+                    'message': 'Profile updated successfully',
+                    'profile_data': serializer.data,
+                }
+                return Response(response_data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Profile.DoesNotExist:
+            return Response({'message': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
