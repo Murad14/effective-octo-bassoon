@@ -156,9 +156,12 @@ class ProfileEditAPIView(APIView):
     
     def put(self, request, format=None):
         try:
-            profile = Profile.objects.get(user=request.user)
+            user = request.user 
 
-            serializer = ProfileSerializer(profile, data=request.data, partial=True)
+            serializer = UserProfileUpdateSerializer(
+                instance=user, 
+                data=request.data, 
+                partial=True)
 
             if serializer.is_valid():
                 serializer.save()

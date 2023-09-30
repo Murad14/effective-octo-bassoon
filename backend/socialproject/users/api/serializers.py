@@ -97,22 +97,26 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('photo',)
         
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    
+    username = serializers.CharField(max_length=50, required=False)
+    first_name = serializers.CharField(max_length=30, required=False)
+    last_name = serializers.CharField(max_length=30, required=False)
+    photo = serializers.ImageField(required=False)
+
     class Meta:
-        model = Profile
-        fields = ('username','first_name', 'last_name','photo')
+        model = User  
+        fields = ('username', 'first_name', 'last_name', 'photo')
 
     def update(self, instance, validated_data):
-        username = validated_data.get('username')
         
-        if username:
-            user = instance.user
-            user.username = username
-            user.save()
-        
-        user.first_name = validated_data.get('first_name', user.first_name)
-        user.last_name = validated_data.get('last_name', user.last_name)
-        user.save()
-        
-        instance.photo = validated_data.get('photo', instance.photo)
+        instance.username = validated_data.get('username', instance.username)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.save()
+
+        
+        profile, created = Profile.objects.get_or_create(user=instance)
+        profile.photo = validated_data.get('photo', profile.photo)
+        profile.save()
+
         return instance
