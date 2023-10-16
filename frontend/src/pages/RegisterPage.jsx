@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const API_URL = 'http://127.0.0.1:8000/';
 
 function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -21,18 +25,40 @@ function RegisterPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Send the registration data to your backend API
-        // You can use a library like Axios to make the API request
+        const registrationData = {
+            username: formData.username,
+            email: formData.email,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            password1: formData.password1,
+            password2: formData.password2,
+        };
 
-        // Example using Axios:
-        // axios.post('/api/register/', formData)
-        //   .then((response) => {
-        //     // Handle successful registration
-        //   })
-        //   .catch((error) => {
-        //     // Handle registration error
-        //   });
+        axios
+            .post(`${API_URL}api/register/`, registrationData)
+            .then((response) => {
+                // Handle successful registration
+                console.log('Registration successful:', response.data);
+
+            })
+            .catch((error) => {
+                // Handle registration error
+                console.error('Registration error:', error);
+
+
+                if (error.response) {
+                    // Response status code (e.g., 400, 404, 500)
+                    console.log('Status:', error.response.status);
+
+
+                    console.log('Error response data:', error.response.data);
+                } else {
+                    // Network error or no response from the server
+                    console.error('Network error:', error.message);
+                }
+            });
     };
+
 
     return (
 
@@ -102,10 +128,13 @@ function RegisterPage() {
                 <div className="mb-6">
                     <button
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     >
                         Register
                     </button>
+                </div>
+                <div className="text-center">
+                    <p>Already have an account? <Link to="/login" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Login</Link></p>
                 </div>
             </form>
         </div>
