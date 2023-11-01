@@ -16,9 +16,7 @@ export default function LoginPage() {
         axios
             .post('http://127.0.0.1:8000/api/login/', formData)
             .then((response) => {
-
                 localStorage.setItem('token', response.data.access);
-
                 window.location.href = '/home';
             })
             .catch((error) => {
@@ -63,6 +61,16 @@ export default function LoginPage() {
                             onChange={handleChange}
                         />
                     </div>
+
+                    <div className="text-center mb-4">
+                        <Link
+                            to="/forget-password"
+                            className="text-blue-500 hover:text-blue-700 font-bold"
+                        >
+                            Forget Password?
+                        </Link>
+                    </div>
+
                     <div className="flex items-center justify-center">
                         <button
                             type="button"
