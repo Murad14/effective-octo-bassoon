@@ -21,7 +21,7 @@ function App() {
           <Route path='/logout' element={<LogoutPage />}> </Route>
           <Route path='/profile' element={<ProfilePage />}> </Route>
           <Route path='/forget-password' element={<ForgetPage />}> </Route>
-          <Route path='/password-reset/:token' element={<ResetPage />}> </Route>
+          <Route path='/password-reset/:encoded_pk/:token' element={<ResetPage />}> </Route>
         </Routes>
       </BrowserRouter>
     </div>

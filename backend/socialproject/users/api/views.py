@@ -84,7 +84,7 @@ class PasswordResetAPIView(generics.GenericAPIView):
                 kwargs= {"encoded_pk": encoded_pk, "token": token},
             )
             
-            reset_url = f"http://127.0.0.1:8000{reset_url}"
+            reset_url = f"http://localhost:8000{reset_url}"
             
             # Send the password reset email
             subject = "Password Reset Request"
