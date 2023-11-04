@@ -40,7 +40,7 @@ export default function ProfilePage() {
             <div className="rounded-full h-40 w-40 overflow-hidden bg-gray-300 cursor-pointer" onClick={showModal}>
                 <img className="h-full w-full object-cover" src={profilePhoto} alt="Profile Photo" />
             </div>
-            <a href="/edit" className="mt-2 text-blue-600">Edit Profile</a>
+            <a href="/update-profile" className="mt-2 text-blue-600">Edit Profile</a>
             <div>
                 <h1 className="text-2xl mt-4">{userData.first_name} {userData.last_name}</h1>
             </div>

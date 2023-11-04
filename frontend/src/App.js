@@ -7,6 +7,7 @@ import LogoutPage from './pages/LogoutPage';
 import ProfilePage from './pages/ProfilePage';
 import ForgetPage from './pages/ForgetPassword';
 import ResetPage from './pages/ResetPassword';
+import UpdatePage from './pages/UpdateProfilePage';
 import { ToastContainer } from 'react-toastify';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path='/profile' element={<ProfilePage />}> </Route>
           <Route path='/forget-password' element={<ForgetPage />}> </Route>
           <Route path='/password-reset/:encoded_pk/:token' element={<ResetPage />}> </Route>
+          <Route path='/update-profile' element={<UpdatePage />}> </Route>
         </Routes>
       </BrowserRouter>
     </div>
